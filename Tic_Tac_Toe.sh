@@ -157,26 +157,7 @@ computerChance()
 	fi
 	if [ $moveSuccessful -eq 0 ]
 	then
-		computerChoice=0
-		cell=1
-		while [ $computerChoice -eq 0 ]
-		do
-			computerChoice=$((RANDOM%9 + 1))
-
-			for ((cell=1;cell<=$NUM_OF_CELLS;cell++))
-			do
-				if [ $cell -eq $computerChoice  ]
-				then
-					if [[ "${gameBoard[cell]}" != "$userSign" && "${gameBoard[cell]}" != "$computerSign"  ]]
-					then
-						gameBoard[cell]=$computerSign
-						cell=10
-					else
-						computerChoice=0
-					fi
-				fi
-			done
-		done
+		selectRandom
 	fi
 }
 
@@ -331,6 +312,31 @@ selectCenter()
 	fi
 }
 
+# FUNCTION TO SELECT RANDOM CELLS OUT OF AVAILABLE CELLS
+
+selectRandom()
+{
+	computerChoice=0
+	cell=1
+	while [ $computerChoice -eq 0 ]
+	do
+		computerChoice=$((RANDOM%9 + 1))
+
+		for ((cell=1;cell<=$NUM_OF_CELLS;cell++))
+		do
+			if [ $cell -eq $computerChoice  ]
+			then
+				if [[ "${gameBoard[cell]}" != "$userSign" && "${gameBoard[cell]}" != "$computerSign"  ]]
+				then
+					gameBoard[cell]=$computerSign
+					cell=10
+				else
+					computerChoice=0
+				fi
+			fi
+		done
+	done
+}
 
 printf "\n		***** WELCOME TO TIC-TAC-TOE GAME SIMULATOR ***** \n\n\n "
 resetGameBoard
@@ -367,7 +373,7 @@ do
 		display
 		checkWinner $computerSign
 		((moveNumber++))
-		if [[ "$winner" != "$COMPUTER_WINS" ]]
+		if [[ "$winner" != "$COMPUTER_WINS" ]] && [ $moveNumber -lt $NUM_OF_CELLS ]
 		then
 			echo " "
 			echo "				**Your Turn***"
