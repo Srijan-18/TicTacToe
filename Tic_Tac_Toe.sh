@@ -7,6 +7,7 @@ COMPUTER_WINS="computer"
 USER_WINS="user"
 IS_TIE="tie"
 NUM_OF_CELLS=9
+CENTER=5
 
 #VARIABLES
 
@@ -149,6 +150,10 @@ computerChance()
 	if [ $moveSuccessful -eq 0 ]
 	then
 		selectCorners
+	fi
+	if [ $moveSuccessful -eq 0 ]
+	then
+		selectCenter
 	fi
 	if [ $moveSuccessful -eq 0 ]
 	then
@@ -314,12 +319,25 @@ selectCorners()
 
 }
 
+# FUNCTION TO SELECT CENTER
+
+selectCenter()
+{
+
+	if [[ "${gameBoard[$CENTER]}" != "$userSign" && "${gameBoard[CENTER]}" != "$computerSign"  ]]
+	then
+		gameBoard[$CENTER]=$computerSign
+		((moveSuccessful++))
+	fi
+}
+
 
 printf "\n		***** WELCOME TO TIC-TAC-TOE GAME SIMULATOR ***** \n\n\n "
 resetGameBoard
 toss
 signDecision
 display
+
 while [[ "$winner" == "none" ]] && [ $moveNumber -lt $NUM_OF_CELLS ]
 do
 	if [ $toss -eq $TOSS_USER ]
@@ -330,7 +348,8 @@ do
 		userChance
 		display
 		checkWinner $userSign
-		if [[ "$winner" != "$USER_WINS" ]]
+		((moveNumber++))
+		if [[ "$winner" != "$USER_WINS" ]] &&  [ $moveNumber -lt $NUM_OF_CELLS ]
 		then
 			echo " "
 			echo "				**Computer's Turn***"
@@ -338,23 +357,25 @@ do
 			computerChance
 			display
 			checkWinner $computerSign
+			((moveNumber++))
 		fi
 	else
+		echo " "
+		echo "				**Computer's Turn***"
+		echo " "
+		computerChance
+		display
+		checkWinner $computerSign
+		((moveNumber++))
+		if [[ "$winner" != "$COMPUTER_WINS" ]]
+		then
 			echo " "
-			echo "				**Computer's Turn***"
+			echo "				**Your Turn***"
 			echo " "
-			computerChance
+			userChance
 			display
-			checkWinner $computerSign
-			if [[ "$winner" != "$COMPUTER_WINS" ]]
-			then
-				echo " "
-				echo "				**Your Turn***"
-				echo " "
-				userChance
-				display
-				checkWinner $userSign
-			fi
+			checkWinner $userSign
+			((moveNumber++))
+		fi
 	fi
-	((moveNumber++))
 done
