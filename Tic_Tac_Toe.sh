@@ -148,6 +148,10 @@ computerChance()
 	fi
 	if [ $moveSuccessful -eq 0 ]
 	then
+		selectCorners
+	fi
+	if [ $moveSuccessful -eq 0 ]
+	then
 		computerChoice=0
 		cell=1
 		while [ $computerChoice -eq 0 ]
@@ -293,6 +297,23 @@ userWinningMove()
 		done
 	done
 }
+
+#FUNCTION TO CHECK AND SELECT CORNERS IF AVAILABLE
+
+selectCorners()
+{
+	for cell in 1 3 7 9
+	do
+		if [[ "${gameBoard[cell]}" != "$userSign" && "${gameBoard[cell]}" != "$computerSign"  ]]
+		then
+			gameBoard[cell]=$computerSign
+			((moveSuccessful++))
+			break
+		fi
+	done
+
+}
+
 
 printf "\n		***** WELCOME TO TIC-TAC-TOE GAME SIMULATOR ***** \n\n\n "
 resetGameBoard
