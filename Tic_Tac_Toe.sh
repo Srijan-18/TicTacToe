@@ -16,6 +16,7 @@ toss=2
 computerSign=""
 userSign=""
 userChoice=0
+computerChoice=0
 cellOccupied=0
 winner="none"
 moveNumber=0
@@ -139,26 +140,51 @@ userChance()
 
 computerChance()
 {
-	computerChoice=0
-	cell=1
-	while [ $computerChoice -eq 0 ]
+	moveSuccessful=0
+	for(( computerChoice=1;computerChoice<=NUM_OF_CELLS;computerChoice++))
 	do
-		computerChoice=$((RANDOM%9 + 1))
-
-		for ((cell=1;cell<=$NUM_OF_CELLS;cell++))
+		for ((cellCount=1;cellCount<=$NUM_OF_CELLS;cellCount++))
 		do
-			if [ $cell -eq $computerChoice  ]
+			if [ $cellCount -eq $computerChoice  ]
 			then
-				if [[ "${gameBoard[cell]}" != "$userSign" || "${gameBoard[cell]}" != "$computerSign"  ]]
+				if [[ "${gameBoard[cellCount]}" != "$userSign" && "${gameBoard[cellCount]}" != "$computerSign"  ]]
 				then
-					gameBoard[cell]=$computerSign
-					cell=10
-				else
-					computerChoice=0
+					computerWinningMove
+					if [[ "$winner" == "$COMPUTER_WINS" ]]
+					then
+						winner="none"
+						cellCount=10
+						((moveSuccessful++))
+					else
+						gameBoard[cellCount]=$cellCount
+					fi
 				fi
 			fi
 		done
 	done
+	if [ $moveSuccessful -eq 0 ]
+	then
+		computerChoice=0
+		cell=1
+		while [ $computerChoice -eq 0 ]
+		do
+			computerChoice=$((RANDOM%9 + 1))
+
+			for ((cell=1;cell<=$NUM_OF_CELLS;cell++))
+			do
+				if [ $cell -eq $computerChoice  ]
+				then
+					if [[ "${gameBoard[cell]}" != "$userSign" || "${gameBoard[cell]}" != "$computerSign"  ]]
+					then
+						gameBoard[cell]=$computerSign
+						cell=10
+					else
+						computerChoice=0
+					fi
+				fi
+			done
+		done
+	fi
 }
 
 # FUNCTION TO DETERMINE RESULT WINNER
@@ -221,6 +247,13 @@ checkWinner()
 	fi
 }
 
+#FUNCTION TO CHECK POSSIBILITY OF A MOVE THAT CAN MAKE COMPUTER WIN
+
+computerWinningMove()
+{
+	gameBoard[computerChoice]=$computerSign
+	checkWinner $computerSign
+}
 
 printf "\n		***** WELCOME TO TIC-TAC-TOE GAME SIMULATOR ***** \n\n\n "
 resetGameBoard
