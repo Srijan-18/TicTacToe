@@ -161,7 +161,7 @@ computerChance()
 	fi
 }
 
-# FUNCTION TO DETERMINE RESULT WINNER
+# FUNCTION TO DETERMINE WINNER
 
 checkWinner()
 {
@@ -338,6 +338,10 @@ selectRandom()
 	done
 }
 
+
+#*************************        MAIN			*************************
+
+
 printf "\n		***** WELCOME TO TIC-TAC-TOE GAME SIMULATOR ***** \n\n\n "
 resetGameBoard
 toss
@@ -385,3 +389,16 @@ do
 		fi
 	fi
 done
+
+if [[ "$winner" == "$USER_WINS" ]]
+then
+	echo "					***YOU WON***"
+elif	[[ "$winner" == "$COMPUTER_WINS" ]]
+then
+	echo "					***COMPUTER WON***"
+else
+	echo "					***IT'S A TIE ***"
+fi
+
+
+##########		END		##########
