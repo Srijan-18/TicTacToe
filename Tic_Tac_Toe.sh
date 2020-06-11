@@ -141,27 +141,11 @@ userChance()
 computerChance()
 {
 	moveSuccessful=0
-	for(( computerChoice=1;computerChoice<=NUM_OF_CELLS;computerChoice++))
-	do
-		for ((cellCount=1;cellCount<=$NUM_OF_CELLS;cellCount++))
-		do
-			if [ $cellCount -eq $computerChoice  ]
-			then
-				if [[ "${gameBoard[cellCount]}" != "$userSign" && "${gameBoard[cellCount]}" != "$computerSign"  ]]
-				then
-					computerWinningMove
-					if [[ "$winner" == "$COMPUTER_WINS" ]]
-					then
-						winner="none"
-						cellCount=10
-						((moveSuccessful++))
-					else
-						gameBoard[cellCount]=$cellCount
-					fi
-				fi
-			fi
-		done
-	done
+	computerWinningMove
+	if [ $moveSuccessful -eq 0 ]
+	then
+		userWinningMove
+	fi
 	if [ $moveSuccessful -eq 0 ]
 	then
 		computerChoice=0
@@ -174,7 +158,7 @@ computerChance()
 			do
 				if [ $cell -eq $computerChoice  ]
 				then
-					if [[ "${gameBoard[cell]}" != "$userSign" || "${gameBoard[cell]}" != "$computerSign"  ]]
+					if [[ "${gameBoard[cell]}" != "$userSign" && "${gameBoard[cell]}" != "$computerSign"  ]]
 					then
 						gameBoard[cell]=$computerSign
 						cell=10
@@ -251,8 +235,63 @@ checkWinner()
 
 computerWinningMove()
 {
-	gameBoard[computerChoice]=$computerSign
-	checkWinner $computerSign
+	
+	for(( computerChoice=1;computerChoice<=NUM_OF_CELLS;computerChoice++))
+	do
+		for ((cellCount=1;cellCount<=$NUM_OF_CELLS;cellCount++))
+		do
+			if [ $cellCount -eq $computerChoice  ]
+			then
+				if [[ "${gameBoard[cellCount]}" != "$userSign" && "${gameBoard[cellCount]}" != "$computerSign"  ]]
+				then
+# CHECK IF MOVE GETS COMPUTER A WIN, IF SO THEN MAKE THE MOVE
+					gameBoard[computerChoice]=$computerSign
+					checkWinner $computerSign
+					if [[ "$winner" == "$COMPUTER_WINS" ]]
+					then
+						winner="none"
+						cellCount=10
+						computerChoice=10
+						((moveSuccessful++))
+					else
+						gameBoard[cellCount]=$cellCount
+					fi
+				fi
+			fi
+		done
+	done
+}
+
+#FUNCTION FIND USER'S WINNING POSSIBILTY AND THEN BLOCK IT
+
+
+userWinningMove()
+{
+	for(( computerChoice=1;computerChoice<=NUM_OF_CELLS;computerChoice++))
+	do
+		for ((cellCount=1;cellCount<=$NUM_OF_CELLS;cellCount++))
+		do
+			if [ $cellCount -eq $computerChoice  ]
+			then
+				if [[ "${gameBoard[cellCount]}" != "$userSign" && "${gameBoard[cellCount]}" != "$computerSign"  ]]
+				then
+# CHECK IF MOVE IN PRESENT CELL GETS USER A WIN, IF SO THEN BLOCK IT
+					gameBoard[computerChoice]=$userSign
+					checkWinner $userSign
+					if [[ "$winner" == "$USER_WINS" ]]
+						then
+							winner="none"
+							gameBoard[cellCount]=$computerSign
+							cellCount=10
+							computerChoice=10
+							((moveSuccessful++))
+					else
+							gameBoard[cellCount]=$cellCount
+					fi
+				fi
+			fi
+		done
+	done
 }
 
 printf "\n		***** WELCOME TO TIC-TAC-TOE GAME SIMULATOR ***** \n\n\n "
