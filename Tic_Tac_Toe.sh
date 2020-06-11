@@ -1,8 +1,12 @@
-
+#!/bin/bash -x
 #CONSTANTS
 
 TOSS_USER=1
 COMPUTER_X=1
+COMPUTER_WINS="computer"
+USER_WINS="user"
+IS_TIE="tie"
+
 #VARIABLES
 
 declare -a gameBoard
@@ -12,6 +16,9 @@ computerSign=""
 userSign=""
 userChoice=0
 cellOccupied=0
+winner="none"
+moveNumber=0
+
 #FUNCTION TO RESET GAME BOARD WITH RESPECTIVE CELL NUMBERS
 
 resetGameBoard()
@@ -72,9 +79,9 @@ signDecision()
 		fi
 	fi
 
-echo "			Signs are :"
-echo "			USER : $userSign"
-echo "			COMPUTER : $computerSign"
+	echo "			Signs are :"
+	echo "			USER : $userSign"
+	echo "			COMPUTER : $computerSign"
 }
 
 #FUNCTION TO DISPLAY BOARD
@@ -126,9 +133,108 @@ userChance()
 		fi
 	done
 }
+
+# FUNCTION TO DETERMINE RESULT WINNER
+
+checkWinner()
+{
+	playerSign=$1
+	winnerSign=""
+	cell=1
+	while [[ "$winner" == "none" ]] && [ $cell -le 9 ]
+	do
+		if [ $cell -eq 1 ]
+		then
+			if [[ "${gameBoard[1]}" == "$playerSign" ]] &&  [[ "${gameBoard[2]}" == "$playerSign" ]]  && [[ "${gameBoard[3]}" == "$playerSign" ]]
+			then
+				winnerSign=$playerSign;
+			elif [[ "${gameBoard[1]}" == "$playerSign" ]] && [[ "${gameBoard[5]}" == "$playerSign" ]] && [[ "${gameBoard[9]}" == "$playerSign" ]]
+			then
+				winnerSign=$playerSign;
+			elif [[ "${gameBoard[1]}" == "$playerSign" ]] && [[ "${gameBoard[4]}" == "$playerSign" ]] && [[ "${gameBoard[7]}" == "$playerSign" ]]
+			then
+				winnerSign=$playerSign;
+			fi
+		elif [ $cell -eq  2 ]
+		then
+			if [[ "${gameBoard[2]}" == "$playerSign" ]] && [[ "${gameBoard[5]}" == "$playerSign" ]] && [[ "${gameBoard[8]}" == "$playerSign" ]]
+			then
+				winnerSign=$playerSign
+			fi
+		elif [ $cell -eq  3 ]
+		then
+			if [[ "${gameBoard[3]}" == "$playerSign" ]] && [[ "${gameBoard[6]}" == "$playerSign" ]] && [[ "${gameBoard[9]}" == "$playerSign" ]]
+			then
+				winnerSign=$playerSign
+			elif [[ "${gameBoard[3]}" == "$playerSign" ]] && [[ "${gameBoard[5]}" == "$playerSign" ]] && [[ "${gameBoard[7]}" == "$playerSign" ]]
+			then
+				winnerSign=$playerSign
+			fi
+		elif [ $cell -eq  4 ]
+		then
+			if [[ "${gameBoard[4]}" == "$playerSign" ]] && [[ "${gameBoard[5]}" == "$playerSign" ]] && [[ "${gameBoard[6]}" == "$playerSign" ]]
+			then
+				winnerSign=$playerSign
+			fi
+		elif [ $cell -eq  7 ]
+		then
+			if [[ "${gameBoard[7]}" == "$playerSign" ]] && [[ "${gameBoard[8]}" == "$playerSign" ]] && [[ "${gameBoard[9]}" == "$playerSign" ]]
+			then
+				winnerSign=$playerSign
+			fi
+		fi
+	((cell++))
+	done
+	if [[ "$winnerSign" == "$userSign" ]]
+	then
+		winner=$USER_WINS
+	elif [[ "$winnerSign" == "$computerSign" ]]
+	then
+		winner=$COMPUTER_WINS
+	fi
+}
+
+
 printf "\n		***** WELCOME TO TIC-TAC-TOE GAME SIMULATOR ***** \n\n\n "
 resetGameBoard
 toss
 signDecision
 display
-userChance
+while [[ "$winner" == "none" ]] && [ $moveNumber -lt 9 ]
+do
+	if [ $toss -eq $TOSS_USER ]
+	then
+		echo " "
+		echo "				**Your Turn***"
+		echo " "
+		userChance
+		display
+		checkWinner $userSign
+		if [[ "$winner" != "$USER_WINS" ]]
+		then
+			echo " "
+			echo "				**Computer's Turn***"
+			echo " "
+			#computerChance
+			display
+			checkWinner $computerSign
+		fi
+	else
+			echo " "
+			echo "				**Computer's Turn***"
+			echo " "
+			#computerChance
+			display
+			checkWinner $computerSign
+			if [[ "$winner" != "$COMPUTER_WINS" ]]
+			then
+				echo " "
+				echo "				**Your Turn***"
+				echo " "
+				userChance
+				display
+				checkWinner $userSign
+			fi
+	fi
+	((moveNumber++))
+done
