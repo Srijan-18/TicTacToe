@@ -1,4 +1,4 @@
-#!/bin/bash -x
+
 #CONSTANTS
 
 TOSS_USER=1
@@ -6,6 +6,7 @@ COMPUTER_X=1
 COMPUTER_WINS="computer"
 USER_WINS="user"
 IS_TIE="tie"
+NUM_OF_CELLS=9
 
 #VARIABLES
 
@@ -23,7 +24,7 @@ moveNumber=0
 
 resetGameBoard()
 {
-	for((cell=1;cell<=9;cell++))
+	for((cell=1;cell<=$NUM_OF_CELLS;cell++))
 	do
 		gameBoard[cell]=$cell
 	done
@@ -110,11 +111,11 @@ userChance()
 		if [[ $userChoice -gt 0 && $userChoice -lt 10 ]]
 		then
 			cellOccupied=0
-			for((cell=1;cell<=9;cell++))
+			for((cell=1;cell<=$NUM_OF_CELLS;cell++))
 			do
 				if [ $cell -eq $userChoice  ]
 				then
-					if [[ "${gameBoard[cell]}" == "X" || "${gameBoard[cell]}" == "O"  ]]
+					if [[ "${gameBoard[cell]}" == "$userSign" || "${gameBoard[cell]}" == "$computerSign"  ]]
 					then
 					 ((cellOccupied++))
 					else
@@ -134,6 +135,32 @@ userChance()
 	done
 }
 
+# FUNCTION TO GENERATE COMPUTER'S MOVE
+
+computerChance()
+{
+	computerChoice=0
+	cell=1
+	while [ $computerChoice -eq 0 ]
+	do
+		computerChoice=$((RANDOM%9 + 1))
+
+		for ((cell=1;cell<=$NUM_OF_CELLS;cell++))
+		do
+			if [ $cell -eq $computerChoice  ]
+			then
+				if [[ "${gameBoard[cell]}" != "$userSign" || "${gameBoard[cell]}" != "$computerSign"  ]]
+				then
+					gameBoard[cell]=$computerSign
+					cell=10
+				else
+					computerChoice=0
+				fi
+			fi
+		done
+	done
+}
+
 # FUNCTION TO DETERMINE RESULT WINNER
 
 checkWinner()
@@ -141,7 +168,7 @@ checkWinner()
 	playerSign=$1
 	winnerSign=""
 	cell=1
-	while [[ "$winner" == "none" ]] && [ $cell -le 9 ]
+	while [[ "$winner" == "none" ]] && [ $cell -le $NUM_OF_CELLS ]
 	do
 		if [ $cell -eq 1 ]
 		then
@@ -200,7 +227,7 @@ resetGameBoard
 toss
 signDecision
 display
-while [[ "$winner" == "none" ]] && [ $moveNumber -lt 9 ]
+while [[ "$winner" == "none" ]] && [ $moveNumber -lt $NUM_OF_CELLS ]
 do
 	if [ $toss -eq $TOSS_USER ]
 	then
@@ -215,7 +242,7 @@ do
 			echo " "
 			echo "				**Computer's Turn***"
 			echo " "
-			#computerChance
+			computerChance
 			display
 			checkWinner $computerSign
 		fi
@@ -223,7 +250,7 @@ do
 			echo " "
 			echo "				**Computer's Turn***"
 			echo " "
-			#computerChance
+			computerChance
 			display
 			checkWinner $computerSign
 			if [[ "$winner" != "$COMPUTER_WINS" ]]
