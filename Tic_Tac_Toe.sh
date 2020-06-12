@@ -6,7 +6,8 @@ COMPUTER_X=1
 COMPUTER_WINS="computer"
 USER_WINS="user"
 IS_TIE="tie"
-
+NUM_OF_ROWS=3
+NUM_OF_COLUMNS=3
 #VARIABLES
 
 declare -a gameBoard
@@ -138,53 +139,51 @@ userChance()
 
 checkWinner()
 {
+	winnerDecision=0
 	playerSign=$1
 	winnerSign=""
-	cell=1
-	while [[ "$winner" == "none" ]] && [ $cell -le 9 ]
-	do
-		if [ $cell -eq 1 ]
+
+# CHECK FOR ROWS
+echo "r"
+for (( cell=1;cell<=NUM_OF_ROWS*NUM_OF_COLUMNS ; cell+=NUM_OF_ROWS))
+do
+	if [ $winnerDecision -eq 0  ]
+	then
+		if [[ "${gameBoard[cell]}" == "$playerSign" && "${gameBoard[((cell+1))]}" == "$playerSign" && "${gameBoard[((cell+2))]}" == "$playerSign" ]]
 		then
-			if [[ "${gameBoard[1]}" == "$playerSign" ]] &&  [[ "${gameBoard[2]}" == "$playerSign" ]]  && [[ "${gameBoard[3]}" == "$playerSign" ]]
-			then
-				winnerSign=$playerSign;
-			elif [[ "${gameBoard[1]}" == "$playerSign" ]] && [[ "${gameBoard[5]}" == "$playerSign" ]] && [[ "${gameBoard[9]}" == "$playerSign" ]]
-			then
-				winnerSign=$playerSign;
-			elif [[ "${gameBoard[1]}" == "$playerSign" ]] && [[ "${gameBoard[4]}" == "$playerSign" ]] && [[ "${gameBoard[7]}" == "$playerSign" ]]
-			then
-				winnerSign=$playerSign;
-			fi
-		elif [ $cell -eq  2 ]
-		then
-			if [[ "${gameBoard[2]}" == "$playerSign" ]] && [[ "${gameBoard[5]}" == "$playerSign" ]] && [[ "${gameBoard[8]}" == "$playerSign" ]]
-			then
-				winnerSign=$playerSign
-			fi
-		elif [ $cell -eq  3 ]
-		then
-			if [[ "${gameBoard[3]}" == "$playerSign" ]] && [[ "${gameBoard[6]}" == "$playerSign" ]] && [[ "${gameBoard[9]}" == "$playerSign" ]]
-			then
-				winnerSign=$playerSign
-			elif [[ "${gameBoard[3]}" == "$playerSign" ]] && [[ "${gameBoard[5]}" == "$playerSign" ]] && [[ "${gameBoard[7]}" == "$playerSign" ]]
-			then
-				winnerSign=$playerSign
-			fi
-		elif [ $cell -eq  4 ]
-		then
-			if [[ "${gameBoard[4]}" == "$playerSign" ]] && [[ "${gameBoard[5]}" == "$playerSign" ]] && [[ "${gameBoard[6]}" == "$playerSign" ]]
-			then
-				winnerSign=$playerSign
-			fi
-		elif [ $cell -eq  7 ]
-		then
-			if [[ "${gameBoard[7]}" == "$playerSign" ]] && [[ "${gameBoard[8]}" == "$playerSign" ]] && [[ "${gameBoard[9]}" == "$playerSign" ]]
-			then
-				winnerSign=$playerSign
-			fi
+			winnerSign=$playerSign
+			((winnerDecision++))
+			break
 		fi
-	((cell++))
-	done
+	fi
+done
+
+# CHECK FOR COLUMNS
+echo "c"
+for ((cell=1;cell<=$NUM_OF_COLUMNS;cell++))
+do
+	if [ $winnerDecision -eq 0  ]
+	then
+		if [[ "${gameBoard[cell]}" == "$playerSign" && "${gameBoard[((cell+NUM_OF_COLUMNS))]}" == "$playerSign" && "${gameBoard[((cell+(2*NUM_OF_COLUMNS)))]}" == "$playerSign" ]]
+		then
+			winnerSign=$playerSign
+			((winnerDecision++))
+			break
+		fi
+	fi
+done
+
+# CHECK FOR DIAGONALS
+echo "d"
+if [[ $winnerDecision -eq 0  ]] && [[ "${gameBoard[1]}" == "$playerSign" ]] && [[ "${gameBoard[5]}" == "$playerSign" ]] && [[ "${gameBoard[9]}" == "$playerSign" ]]
+then
+	winnerSign=$playerSign;
+	((winnerDesicion++))
+elif [[ $winnerDecision -eq 0  ]] && [[ "${gameBoard[3]}" == "$playerSign" ]] && [[ "${gameBoard[5]}" == "$playerSign" ]] && [[ "${gameBoard[7]}" == "$playerSign" ]]
+then
+	winnerSign=$playerSign;
+	((winnerDesicion++))
+fi
 	if [[ "$winnerSign" == "$userSign" ]]
 	then
 		winner=$USER_WINS
