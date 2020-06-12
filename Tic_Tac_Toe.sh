@@ -162,6 +162,7 @@ computerChance()
 }
 
 # FUNCTION TO DETERMINE WINNER
+
 checkWinner()
 {
 	winnerDecision=0
@@ -222,30 +223,22 @@ fi
 
 computerWinningMove()
 {
-	
-	for(( computerChoice=1;computerChoice<=NUM_OF_ROWS*NUM_OF_COLUMNS;computerChoice++))
+	for ((cellCount=1;cellCount<=NUM_OF_ROWS*NUM_OF_COLUMNS;cellCount++))
 	do
-		for ((cellCount=1;cellCount<=NUM_OF_ROWS*NUM_OF_COLUMNS;cellCount++))
-		do
-			if [ $cellCount -eq $computerChoice  ]
-			then
-				if [[ "${gameBoard[cellCount]}" != "$userSign" && "${gameBoard[cellCount]}" != "$computerSign"  ]]
-				then
+		if [[ "${gameBoard[cellCount]}" != "$userSign" && "${gameBoard[cellCount]}" != "$computerSign"  ]]
+		then
 # CHECK IF MOVE GETS COMPUTER A WIN, IF SO THEN MAKE THE MOVE
-					gameBoard[computerChoice]=$computerSign
-					checkWinner $computerSign
-					if [[ "$winner" == "$COMPUTER_WINS" ]]
-					then
-						winner="none"
-						cellCount=10
-						computerChoice=10
-						((moveSuccessful++))
-					else
-						gameBoard[cellCount]=$cellCount
-					fi
-				fi
+			gameBoard[cellCount]=$computerSign
+			checkWinner $computerSign
+			if [[ "$winner" == "$COMPUTER_WINS" ]]
+			then
+				winner="none"
+				cellCount=10
+				((moveSuccessful++))
+				else
+				gameBoard[cellCount]=$cellCount
 			fi
-		done
+		fi
 	done
 }
 
@@ -254,30 +247,23 @@ computerWinningMove()
 
 userWinningMove()
 {
-	for(( computerChoice=1;computerChoice<=NUM_OF_ROWS*NUM_OF_COLUMNS;computerChoice++))
+	for ((cellCount=1;cellCount<=NUM_OF_ROWS*NUM_OF_COLUMNS;cellCount++))
 	do
-		for ((cellCount=1;cellCount<=NUM_OF_ROWS*NUM_OF_COLUMNS;cellCount++))
-		do
-			if [ $cellCount -eq $computerChoice  ]
-			then
-				if [[ "${gameBoard[cellCount]}" != "$userSign" && "${gameBoard[cellCount]}" != "$computerSign"  ]]
-				then
+		if [[ "${gameBoard[cellCount]}" != "$userSign" && "${gameBoard[cellCount]}" != "$computerSign"  ]]
+		then
 # CHECK IF MOVE IN PRESENT CELL GETS USER A WIN, IF SO THEN BLOCK IT
-					gameBoard[computerChoice]=$userSign
-					checkWinner $userSign
-					if [[ "$winner" == "$USER_WINS" ]]
-						then
-							winner="none"
-							gameBoard[cellCount]=$computerSign
-							cellCount=10
-							computerChoice=10
-							((moveSuccessful++))
-					else
-							gameBoard[cellCount]=$cellCount
-					fi
-				fi
+			gameBoard[cellCount]=$userSign
+			checkWinner $userSign
+			if [[ "$winner" == "$USER_WINS" ]]
+			then
+				winner="none"
+				gameBoard[cellCount]=$computerSign
+				cellCount=10
+				((moveSuccessful++))
+			else
+				gameBoard[cellCount]=$cellCount
 			fi
-		done
+		fi
 	done
 }
 
