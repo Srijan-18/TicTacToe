@@ -1,4 +1,3 @@
-
 #CONSTANTS
 
 TOSS_USER=1
@@ -6,7 +5,8 @@ COMPUTER_X=1
 COMPUTER_WINS="computer"
 USER_WINS="user"
 IS_TIE="tie"
-NUM_OF_CELLS=9
+NUM_OF_ROWS=3
+NUM_OF_COLUMNS=3
 CENTER=5
 
 #VARIABLES
@@ -26,7 +26,7 @@ moveNumber=0
 
 resetGameBoard()
 {
-	for((cell=1;cell<=$NUM_OF_CELLS;cell++))
+	for((cell=1;cell<=NUM_OF_ROWS*NUM_OF_COLUMNS;cell++))
 	do
 		gameBoard[cell]=$cell
 	done
@@ -113,7 +113,7 @@ userChance()
 		if [[ $userChoice -gt 0 && $userChoice -lt 10 ]]
 		then
 			cellOccupied=0
-			for((cell=1;cell<=$NUM_OF_CELLS;cell++))
+			for((cell=1;cell<=NUM_OF_ROWS*NUM_OF_COLUMNS;cell++))
 			do
 				if [ $cell -eq $userChoice  ]
 				then
@@ -162,56 +162,53 @@ computerChance()
 }
 
 # FUNCTION TO DETERMINE WINNER
-
 checkWinner()
 {
+	winnerDecision=0
 	playerSign=$1
 	winnerSign=""
-	cell=1
-	while [[ "$winner" == "none" ]] && [ $cell -le $NUM_OF_CELLS ]
-	do
-		if [ $cell -eq 1 ]
+
+# CHECK FOR ROWS
+
+for (( cell=1;cell<=NUM_OF_ROWS*NUM_OF_COLUMNS ; cell+=NUM_OF_ROWS))
+do
+	if [ $winnerDecision -eq 0  ]
+	then
+		if [[ "${gameBoard[cell]}" == "$playerSign" && "${gameBoard[((cell+1))]}" == "$playerSign" && "${gameBoard[((cell+2))]}" == "$playerSign" ]]
 		then
-			if [[ "${gameBoard[1]}" == "$playerSign" ]] &&  [[ "${gameBoard[2]}" == "$playerSign" ]]  && [[ "${gameBoard[3]}" == "$playerSign" ]]
-			then
-				winnerSign=$playerSign;
-			elif [[ "${gameBoard[1]}" == "$playerSign" ]] && [[ "${gameBoard[5]}" == "$playerSign" ]] && [[ "${gameBoard[9]}" == "$playerSign" ]]
-			then
-				winnerSign=$playerSign;
-			elif [[ "${gameBoard[1]}" == "$playerSign" ]] && [[ "${gameBoard[4]}" == "$playerSign" ]] && [[ "${gameBoard[7]}" == "$playerSign" ]]
-			then
-				winnerSign=$playerSign;
-			fi
-		elif [ $cell -eq  2 ]
-		then
-			if [[ "${gameBoard[2]}" == "$playerSign" ]] && [[ "${gameBoard[5]}" == "$playerSign" ]] && [[ "${gameBoard[8]}" == "$playerSign" ]]
-			then
-				winnerSign=$playerSign
-			fi
-		elif [ $cell -eq  3 ]
-		then
-			if [[ "${gameBoard[3]}" == "$playerSign" ]] && [[ "${gameBoard[6]}" == "$playerSign" ]] && [[ "${gameBoard[9]}" == "$playerSign" ]]
-			then
-				winnerSign=$playerSign
-			elif [[ "${gameBoard[3]}" == "$playerSign" ]] && [[ "${gameBoard[5]}" == "$playerSign" ]] && [[ "${gameBoard[7]}" == "$playerSign" ]]
-			then
-				winnerSign=$playerSign
-			fi
-		elif [ $cell -eq  4 ]
-		then
-			if [[ "${gameBoard[4]}" == "$playerSign" ]] && [[ "${gameBoard[5]}" == "$playerSign" ]] && [[ "${gameBoard[6]}" == "$playerSign" ]]
-			then
-				winnerSign=$playerSign
-			fi
-		elif [ $cell -eq  7 ]
-		then
-			if [[ "${gameBoard[7]}" == "$playerSign" ]] && [[ "${gameBoard[8]}" == "$playerSign" ]] && [[ "${gameBoard[9]}" == "$playerSign" ]]
-			then
-				winnerSign=$playerSign
-			fi
+			winnerSign=$playerSign
+			((winnerDecision++))
+			break
 		fi
-	((cell++))
-	done
+	fi
+done
+
+# CHECK FOR COLUMNS
+
+for ((cell=1;cell<=$NUM_OF_COLUMNS;cell++))
+do
+	if [ $winnerDecision -eq 0  ]
+	then
+		if [[ "${gameBoard[cell]}" == "$playerSign" && "${gameBoard[((cell+NUM_OF_COLUMNS))]}" == "$playerSign" && "${gameBoard[((cell+(2*NUM_OF_COLUMNS)))]}" == "$playerSign" ]]
+		then
+			winnerSign=$playerSign
+			((winnerDecision++))
+			break
+		fi
+	fi
+done
+
+# CHECK FOR DIAGONALS
+
+if [[ $winnerDecision -eq 0  ]] && [[ "${gameBoard[1]}" == "$playerSign" ]] && [[ "${gameBoard[5]}" == "$playerSign" ]] && [[ "${gameBoard[9]}" == "$playerSign" ]]
+then
+	winnerSign=$playerSign;
+	((winnerDesicion++))
+elif [[ $winnerDecision -eq 0  ]] && [[ "${gameBoard[3]}" == "$playerSign" ]] && [[ "${gameBoard[5]}" == "$playerSign" ]] && [[ "${gameBoard[7]}" == "$playerSign" ]]
+then
+	winnerSign=$playerSign;
+	((winnerDesicion++))
+fi
 	if [[ "$winnerSign" == "$userSign" ]]
 	then
 		winner=$USER_WINS
@@ -226,9 +223,9 @@ checkWinner()
 computerWinningMove()
 {
 	
-	for(( computerChoice=1;computerChoice<=NUM_OF_CELLS;computerChoice++))
+	for(( computerChoice=1;computerChoice<=NUM_OF_ROWS*NUM_OF_COLUMNS;computerChoice++))
 	do
-		for ((cellCount=1;cellCount<=$NUM_OF_CELLS;cellCount++))
+		for ((cellCount=1;cellCount<=NUM_OF_ROWS*NUM_OF_COLUMNS;cellCount++))
 		do
 			if [ $cellCount -eq $computerChoice  ]
 			then
@@ -257,9 +254,9 @@ computerWinningMove()
 
 userWinningMove()
 {
-	for(( computerChoice=1;computerChoice<=NUM_OF_CELLS;computerChoice++))
+	for(( computerChoice=1;computerChoice<=NUM_OF_ROWS*NUM_OF_COLUMNS;computerChoice++))
 	do
-		for ((cellCount=1;cellCount<=$NUM_OF_CELLS;cellCount++))
+		for ((cellCount=1;cellCount<=NUM_OF_ROWS*NUM_OF_COLUMNS;cellCount++))
 		do
 			if [ $cellCount -eq $computerChoice  ]
 			then
@@ -322,7 +319,7 @@ selectRandom()
 	do
 		computerChoice=$((RANDOM%9 + 1))
 
-		for ((cell=1;cell<=$NUM_OF_CELLS;cell++))
+		for ((cell=1;cell<=NUM_OF_ROWS*NUM_OF_COLUMNS;cell++))
 		do
 			if [ $cell -eq $computerChoice  ]
 			then
@@ -348,7 +345,7 @@ toss
 signDecision
 display
 
-while [[ "$winner" == "none" ]] && [ $moveNumber -lt $NUM_OF_CELLS ]
+while [[ "$winner" == "none" ]] && [ $moveNumber -lt $((NUM_OF_ROWS*NUM_OF_COLUMNS)) ]
 do
 	if [ $toss -eq $TOSS_USER ]
 	then
@@ -359,7 +356,7 @@ do
 		display
 		checkWinner $userSign
 		((moveNumber++))
-		if [[ "$winner" != "$USER_WINS" ]] &&  [ $moveNumber -lt $NUM_OF_CELLS ]
+		if [[ "$winner" != "$USER_WINS" ]] &&  [ $moveNumber -lt $((NUM_OF_ROWS*NUM_OF_COLUMNS)) ]
 		then
 			echo " "
 			echo "				**Computer's Turn***"
@@ -377,7 +374,7 @@ do
 		display
 		checkWinner $computerSign
 		((moveNumber++))
-		if [[ "$winner" != "$COMPUTER_WINS" ]] && [ $moveNumber -lt $NUM_OF_CELLS ]
+		if [[ "$winner" != "$COMPUTER_WINS" ]] && [ $moveNumber -lt $((NUM_OF_ROWS*NUM_OF_COLUMNS)) ]
 		then
 			echo " "
 			echo "				**Your Turn***"
