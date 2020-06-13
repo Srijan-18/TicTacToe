@@ -1,4 +1,4 @@
-#CONSTANTS
+#============================		CONSTANTS		============================
 
 TOSS_USER=1
 COMPUTER_X=1
@@ -8,8 +8,9 @@ IS_TIE="tie"
 NUM_OF_ROWS=3
 NUM_OF_COLUMNS=3
 CENTER=5
+CORNERS=(1 3 7 9)
 
-#VARIABLES
+#============================		VARIABLES		============================
 
 declare -a gameBoard
 cell=0
@@ -22,7 +23,7 @@ cellOccupied=0
 winner="none"
 moveNumber=0
 
-#FUNCTION TO RESET GAME BOARD WITH RESPECTIVE CELL NUMBERS
+# FUNCTION TO RESET GAME BOARD WITH RESPECTIVE CELL NUMBERS
 
 resetGameBoard()
 {
@@ -32,7 +33,7 @@ resetGameBoard()
 	done
 }
 
-#FUNCTION TO TOSS AND DECIDE WHO STARTS THE GAME
+# FUNCTION TO TOSS AND DECIDE WHO STARTS THE GAME
 
 toss()
 {
@@ -46,7 +47,7 @@ toss()
 	fi
 }
 
-#FUNCTION TO DECIDE SIGN OF USER AND COMPUTER
+# FUNCTION TO DECIDE SIGN OF USER AND COMPUTER
 
 signDecision()
 {
@@ -84,7 +85,7 @@ signDecision()
 	printf "\t\t\tSigns are :\n\t\t\tUSER --> $userSign\n\t\t\tCOMPUTER --> $computerSign"
 }
 
-#FUNCTION TO DISPLAY BOARD
+# FUNCTION TO DISPLAY BOARD
 
 display()
 {
@@ -96,7 +97,7 @@ display()
 	printf "\t\t\t\t||  ${gameBoard[7]}  ||  ${gameBoard[8]}  ||  ${gameBoard[9]}  ||\n\n"
 }
 
-#FUNCTION TO TAKE INPUT FROM USER
+# FUNCTION TO TAKE INPUT FROM USER
 
 userChance()
 {
@@ -105,7 +106,7 @@ userChance()
 	do
 		printf "\n"
 		read -p "			Enter the cell number to make a move :" userChoice
-		if [[ $userChoice -gt 0 && $userChoice -lt 10 ]]
+		if [[ $userChoice -gt 0 && $userChoice -le $((NUM_OF_ROWS*NUM_OF_COLUMNS)) ]]
 		then
 			cellOccupied=0
 			for((cell=1;cell<=NUM_OF_ROWS*NUM_OF_COLUMNS;cell++))
@@ -214,7 +215,7 @@ fi
 	fi
 }
 
-#FUNCTION TO CHECK POSSIBILITY OF A MOVE THAT CAN MAKE COMPUTER WIN
+# FUNCTION TO CHECK POSSIBILITY OF A MOVE THAT CAN MAKE COMPUTER WIN
 
 computerWinningMove()
 {
@@ -237,7 +238,7 @@ computerWinningMove()
 	done
 }
 
-#FUNCTION FIND USER'S WINNING POSSIBILTY AND THEN BLOCK IT
+# FUNCTION FIND USER'S WINNING POSSIBILTY AND THEN BLOCK IT
 
 
 userWinningMove()
@@ -262,11 +263,11 @@ userWinningMove()
 	done
 }
 
-#FUNCTION TO CHECK AND SELECT CORNERS IF AVAILABLE
+# FUNCTION TO CHECK AND SELECT CORNERS IF AVAILABLE
 
 selectCorners()
 {
-	for cell in 1 3 7 9
+	for cell in ${CORNERS[@]}
 	do
 		if [[ "${gameBoard[cell]}" != "$userSign" && "${gameBoard[cell]}" != "$computerSign"  ]]
 		then
@@ -317,7 +318,7 @@ selectRandom()
 }
 
 
-#*************************        MAIN			*************************
+#============================        MAIN			============================
 
 
 printf "\n\t\t\t***** WELCOME TO TIC-TAC-TOE GAME SIMULATOR *****\n\n\n "
@@ -371,4 +372,4 @@ else
 fi
 
 
-##########		END		##########
+#============================		END		============================
