@@ -40,9 +40,9 @@ toss()
 	toss=$((RANDOM%2))
 	if [ $toss -eq $TOSS_USER ]
 	then
-		echo "			You Won the Toss to make first move"
+		printf "\t\t\tYou Won the Toss to make first move\n\n"
 	else
-		echo "			Computer Won the Toss to make first move"
+		printf "\t\t\tComputer Won the Toss to make first move\n"
 	fi
 }
 
@@ -54,7 +54,7 @@ signDecision()
 	then
 		while [[ "$userSign" == "" ]]
 		do
-			echo""
+			printf "\n"
 			read -p "			Enter your choice of 'X' or 'O' (both are alphabets): " userSign
 			if [[ "$userSign" == "O" || "$userSign" == "o" ]]
 			then
@@ -65,8 +65,7 @@ signDecision()
 				userSign="X"
 				computerSign="O"
 			else
-				echo""
-				echo "			INVALID INPUT PLEASE ENTER EITHER OF TWO OPTIONS"
+				printf "\n\t\t\tINVALID INPUT PLEASE ENTER EITHER OF TWO OPTIONS\n"
 				userSign=""
 			fi
 		done
@@ -82,24 +81,19 @@ signDecision()
 		fi
 	fi
 
-	echo "			Signs are :"
-	echo "			USER : $userSign"
-	echo "			COMPUTER : $computerSign"
+	printf "\t\t\tSigns are :\n\t\t\tUSER --> $userSign\n\t\t\tCOMPUTER --> $computerSign"
 }
 
 #FUNCTION TO DISPLAY BOARD
 
 display()
 {
-	echo " "
-	echo "			     ****CURRENT BOARD STATUS****"
-	echo " "
-	echo "				||  ${gameBoard[1]}  ||  ${gameBoard[2]}  ||  ${gameBoard[3]}  ||"
-	echo "				-----------------------"
-	echo "				||  ${gameBoard[4]}  ||  ${gameBoard[5]}  ||  ${gameBoard[6]}  ||"
-	echo "				-----------------------"
-	echo "				||  ${gameBoard[7]}  ||  ${gameBoard[8]}  ||  ${gameBoard[9]}  ||"
-	echo " "
+	printf "\n\t\t\t\t****CURRENT BOARD STATUS****\n\n"
+	printf "\t\t\t\t||  ${gameBoard[1]}  ||  ${gameBoard[2]}  ||  ${gameBoard[3]}  ||\n"
+	printf "\t\t\t\t-----------------------\n"
+	printf "\t\t\t\t||  ${gameBoard[4]}  ||  ${gameBoard[5]}  ||  ${gameBoard[6]}  ||\n"
+	printf "\t\t\t\t-----------------------\n"
+	printf "\t\t\t\t||  ${gameBoard[7]}  ||  ${gameBoard[8]}  ||  ${gameBoard[9]}  ||\n\n"
 }
 
 #FUNCTION TO TAKE INPUT FROM USER
@@ -109,6 +103,7 @@ userChance()
 	userChoice=0
 	while [ $userChoice -eq 0 ]
 	do
+		printf "\n"
 		read -p "			Enter the cell number to make a move :" userChoice
 		if [[ $userChoice -gt 0 && $userChoice -lt 10 ]]
 		then
@@ -127,11 +122,11 @@ userChance()
 			done
 				if [ $cellOccupied -gt 0 ]
 				then
-					echo "			CELL IS OCCUPIED, ENTER VALID CELL NUMBER"
+					printf "\t\t\tCELL IS OCCUPIED, ENTER VALID CELL NUMBER\n"
 					userChoice=0
 				fi
 		else
-			echo "				INVALID INPUT PLEASE RE-ENTER VALID INPUT"
+			printf "\t\t\tINVALID INPUT PLEASE RE-ENTER VALID INPUT\n"
 			userChoice=0
 		fi
 	done
@@ -325,7 +320,7 @@ selectRandom()
 #*************************        MAIN			*************************
 
 
-printf "\n		***** WELCOME TO TIC-TAC-TOE GAME SIMULATOR ***** \n\n\n "
+printf "\n\t\t\t***** WELCOME TO TIC-TAC-TOE GAME SIMULATOR *****\n\n\n "
 resetGameBoard
 toss
 signDecision
@@ -335,36 +330,28 @@ while [[ "$winner" == "none" ]] && [ $moveNumber -lt $((NUM_OF_ROWS*NUM_OF_COLUM
 do
 	if [ $toss -eq $TOSS_USER ]
 	then
-		echo " "
-		echo "				**Your Turn***"
-		echo " "
+		printf "\n\t\t\t\t***Your Turn***\n"
 		userChance
 		display
 		checkWinner $userSign
 		((moveNumber++))
 		if [[ "$winner" != "$USER_WINS" ]] &&  [ $moveNumber -lt $((NUM_OF_ROWS*NUM_OF_COLUMNS)) ]
 		then
-			echo " "
-			echo "				**Computer's Turn***"
-			echo " "
+			printf "\n\t\t\t\t**Computer's Turn***\n"
 			computerChance
 			display
 			checkWinner $computerSign
 			((moveNumber++))
 		fi
 	else
-		echo " "
-		echo "				**Computer's Turn***"
-		echo " "
+		printf "\n\t\t\t\t***Computer's Turn***\n"
 		computerChance
 		display
 		checkWinner $computerSign
 		((moveNumber++))
 		if [[ "$winner" != "$COMPUTER_WINS" ]] && [ $moveNumber -lt $((NUM_OF_ROWS*NUM_OF_COLUMNS)) ]
 		then
-			echo " "
-			echo "				**Your Turn***"
-			echo " "
+			printf "\n\t\t\t\t***Your Turn***\n"
 			userChance
 			display
 			checkWinner $userSign
@@ -375,12 +362,12 @@ done
 
 if [[ "$winner" == "$USER_WINS" ]]
 then
-	echo "					***YOU WON***"
+	printf "\n\t\t\t\t\t***YOU WON***\n\n"
 elif	[[ "$winner" == "$COMPUTER_WINS" ]]
 then
-	echo "					***COMPUTER WON***"
+	printf "\n\t\t\t\t\t***COMPUTER WON***\n\n"
 else
-	echo "					***IT'S A TIE ***"
+	printf "\n\t\t\t\t\t***IT'S A TIE ***\n\n"
 fi
 
 
